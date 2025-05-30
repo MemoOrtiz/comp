@@ -6,7 +6,15 @@ $user = getenv('DB_USER');
 $pass = getenv('DB_PASS');
 
 // --- 2. Intentar conectar a MySQL ---
-$mysqli = @new mysqli($host, $user, $pass, $db);
+// Después (forzando SSL):
+$mysqli = mysqli_init();
+$mysqli->options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, true);
+$mysqli->ssl_set(NULL, NULL, NULL, NULL, NULL);
+$mysqli->real_connect(
+    $host, $user, $pass, $db, 3306,
+    MYSQLI_CLIENT_SSL
+) or die("Error conectando con SSL: " . mysqli_connect_error());
+
 $ok     = !$mysqli->connect_errno;
 $error  = $mysqli->connect_error;
 
